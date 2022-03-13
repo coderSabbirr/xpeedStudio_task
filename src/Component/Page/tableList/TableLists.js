@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import Swal from "sweetalert2";
 
 const TableList = () => {
   const [tableDatas, setTableDatas] = useState([]);
@@ -16,15 +17,23 @@ const TableList = () => {
   }, []);
 
   const handleDragEnd = (e) => {
-    console.log(e);
     if (!e.destination) return;
     let dragData = Array.from(displayData);
     let [source_data] = dragData.splice(e.source.index, 1);
     dragData.splice(e.destination.index, 0, source_data);
     setDisplayData(dragData);
+    if (tableDatas?.status === "success") {
+      Swal.fire(`${tableDatas?.status}`, `${tableDatas.messages}`, "success");
+    } else if (tableDatas?.status === "false") {
+      Swal.fire({
+        icon: "error",
+        title: `${tableDatas?.status}`,
+        text: `${tableDatas.messages}`,
+      });
+    }
   };
 
-  console.log(tableDatas.data?.headers[0].name.sortable);
+  // console.log(tableDatas.messages);
   // search functionality start
 
   // search id
