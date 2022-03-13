@@ -10,9 +10,13 @@ const Header = () => {
             className="nav-link active"
             aria-current="page"
             to="/"
-            style={{ color: "black", fontSize: "20px" }}
+            style={{ color: "black" }}
           >
-            XpeedStudio
+            <img
+              src="https://i.ibb.co/JCvmP4d/xpeedstudio-logo-header.png"
+              style={{ width: "80%", height: "100%" }}
+              alt=""
+            />
           </Link>
         </li>
         <li className="nav-item">
