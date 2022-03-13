@@ -17,65 +17,124 @@ const TableList = () => {
 
   const handleDragEnd = (e) => {
     console.log(e);
-
     if (!e.destination) return;
-    let tempData = Array.from(displayData);
-    let [source_data] = tempData.splice(e.source.index, 1);
-    tempData.splice(e.destination.index, 0, source_data);
-    setDisplayData(tempData);
-
-    alert("test");
+    let dragData = Array.from(displayData);
+    let [source_data] = dragData.splice(e.source.index, 1);
+    dragData.splice(e.destination.index, 0, source_data);
+    setDisplayData(dragData);
   };
 
+  console.log(tableDatas.data?.headers[0].name.sortable);
   // search functionality start
 
   // search id
   const handleSearchById = (e) => {
-    const searchId = e.target.value;
+    if (tableDatas.data?.headers[0].id.searchable === true) {
+      const searchId = e.target.value;
 
-    const machedId = tableDatas.data?.rows?.filter((item) =>
-      item.id.toString().includes(searchId)
-    );
-    setDisplayData(machedId);
+      const machedId = tableDatas.data?.rows?.filter((item) =>
+        item.id.toString().includes(searchId)
+      );
+      setDisplayData(machedId);
+    }
   };
 
   //search by name
 
   const handleSearchByName = (e) => {
-    const searchName = e.target.value;
-    const machedName = tableDatas.data?.rows?.filter((item) =>
-      item.name.toLowerCase().includes(searchName.toLowerCase())
-    );
-    setDisplayData(machedName);
-  };
-  const handleSearchByMessage = (e) => {
-    const searchName = e.target.value;
-    const machedName = tableDatas.data?.rows?.filter((item) =>
-      item?.message?.toLowerCase().includes(searchName.toLowerCase())
-    );
-    setDisplayData(machedName);
+    if (tableDatas.data?.headers[0].name.searchable === true) {
+      const searchName = e.target.value;
+      const machedName = tableDatas.data?.rows?.filter((item) =>
+        item.name.toLowerCase().includes(searchName.toLowerCase())
+      );
+      setDisplayData(machedName);
+    }
   };
 
   // search functionality end
 
-  // sorted by name,message,date start
-
-  const sorting = (col) => {
-    if (order === "ASC") {
-      const sorted = [...displayData].sort((a, b) =>
-        a[col]?.toLowerCase().toString() > b[col]?.toLowerCase().toString()
-          ? 1
-          : -1
-      );
-      setDisplayData(sorted);
-      setOrder("DSC");
+  // sorted start
+  // sorted by id
+  const sortingbyId = (col) => {
+    if (tableDatas.data?.headers[0].id.sortable === true) {
+      if (order === "ASC") {
+        const sorted = [...displayData].sort((a, b) =>
+          a[col]?.toString() > b[col]?.toString() ? 1 : -1
+        );
+        setDisplayData(sorted);
+        setOrder("DSC");
+      }
+      if (order === "DSC") {
+        const sorted = [...displayData].sort((a, b) =>
+          a[col] < b[col] ? 1 : -1
+        );
+        setDisplayData(sorted);
+        setOrder("ASC");
+      }
     }
-    if (order === "DSC") {
-      const sorted = [...displayData].sort((a, b) =>
-        a[col]?.toLowerCase() < b[col]?.toLowerCase() ? 1 : -1
-      );
-      setDisplayData(sorted);
-      setOrder("ASC");
+  };
+
+  // sorted by name
+
+  const sortingbyName = (col) => {
+    if (tableDatas.data?.headers[0].name.sortable === true) {
+      if (order === "ASC") {
+        const sorted = [...displayData].sort((a, b) =>
+          a[col]?.toLowerCase().toString() > b[col]?.toLowerCase().toString()
+            ? 1
+            : -1
+        );
+        setDisplayData(sorted);
+        setOrder("DSC");
+      }
+      if (order === "DSC") {
+        const sorted = [...displayData].sort((a, b) =>
+          a[col]?.toLowerCase() < b[col]?.toLowerCase() ? 1 : -1
+        );
+        setDisplayData(sorted);
+        setOrder("ASC");
+      }
+    }
+  };
+  // sorted by message
+  const sortingbyMessage = (col) => {
+    if (tableDatas.data?.headers[0].message.sortable === true) {
+      if (order === "ASC") {
+        const sorted = [...displayData].sort((a, b) =>
+          a[col]?.toLowerCase().toString() > b[col]?.toLowerCase().toString()
+            ? 1
+            : -1
+        );
+        setDisplayData(sorted);
+        setOrder("DSC");
+      }
+      if (order === "DSC") {
+        const sorted = [...displayData].sort((a, b) =>
+          a[col]?.toLowerCase() < b[col]?.toLowerCase() ? 1 : -1
+        );
+        setDisplayData(sorted);
+        setOrder("ASC");
+      }
+    }
+  };
+  const sortingbyDate = (col) => {
+    if (tableDatas.data?.headers[0]?.created_at.sortable === true) {
+      if (order === "ASC") {
+        const sorted = [...displayData].sort((a, b) =>
+          a[col]?.toLowerCase().toString() > b[col]?.toLowerCase().toString()
+            ? 1
+            : -1
+        );
+        setDisplayData(sorted);
+        setOrder("DSC");
+      }
+      if (order === "DSC") {
+        const sorted = [...displayData].sort((a, b) =>
+          a[col]?.toLowerCase() < b[col]?.toLowerCase() ? 1 : -1
+        );
+        setDisplayData(sorted);
+        setOrder("ASC");
+      }
     }
   };
   // sorted by name,message,date end
@@ -105,33 +164,29 @@ const TableList = () => {
           aria-describedby="basic-addon1"
           onChange={handleSearchByName}
         />
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Search Message"
-          aria-label=""
-          aria-describedby="basic-addon1"
-          onChange={handleSearchByMessage}
-        />
       </div>
       <DragDropContext onDragEnd={handleDragEnd}>
         <table className="table table-bordered">
           <thead>
             {tableDatas.data?.headers?.map((pd, index) => (
               <tr key={pd.id}>
-                {pd.id.hidden === false && <th scope="col">{pd?.id.title}</th>}
+                {pd.id.hidden === false && (
+                  <th scope="col" onClick={() => sortingbyId("message")}>
+                    {pd?.id.title}
+                  </th>
+                )}
                 {pd.name.hidden === false && (
-                  <th scope="col" onClick={() => sorting("name")}>
+                  <th scope="col" onClick={() => sortingbyName("name")}>
                     {pd?.name.title}
                   </th>
                 )}
                 {pd.message.hidden === false && (
-                  <th scope="col" onClick={() => sorting("message")}>
+                  <th scope="col" onClick={() => sortingbyMessage("message")}>
                     {pd?.message.title}
                   </th>
                 )}
                 {pd.created_at.hidden === false && (
-                  <th scope="col" onClick={() => sorting("created_at")}>
+                  <th scope="col" onClick={() => sortingbyDate("created_at")}>
                     {pd?.created_at.title}
                   </th>
                 )}
@@ -149,23 +204,45 @@ const TableList = () => {
                 {displayData?.map((user, index) => (
                   <Draggable
                     key={user.name}
-                    draggableId={user.name}
+                    draggableId={`${user.id}`}
                     index={index}
                   >
                     {(provider) => (
                       <tr {...provider.draggableProps} ref={provider.innerRef}>
-                        <td {...provider.dragHandleProps} onClick={dargChange}>
-                          {user.id}
-                        </td>
-                        <td {...provider.dragHandleProps} onClick={dargChange}>
-                          {user.name}
-                        </td>
-                        <td {...provider.dragHandleProps} onClick={dargChange}>
-                          {user.message}
-                        </td>
-                        <td {...provider.dragHandleProps} onClick={dargChange}>
-                          {user.created_at}
-                        </td>
+                        {tableDatas.data?.headers[0]?.id.hidden === false && (
+                          <td
+                            {...provider.dragHandleProps}
+                            onClick={dargChange}
+                          >
+                            {user.id}
+                          </td>
+                        )}
+                        {tableDatas.data?.headers[0]?.name.hidden === false && (
+                          <td
+                            {...provider.dragHandleProps}
+                            onClick={dargChange}
+                          >
+                            {user.name}
+                          </td>
+                        )}
+                        {tableDatas.data?.headers[0]?.message.hidden ===
+                          false && (
+                          <td
+                            {...provider.dragHandleProps}
+                            onClick={dargChange}
+                          >
+                            {user.message}
+                          </td>
+                        )}
+                        {tableDatas.data?.headers[0]?.created_at.hidden ===
+                          false && (
+                          <td
+                            {...provider.dragHandleProps}
+                            onClick={dargChange}
+                          >
+                            {user.created_at}
+                          </td>
+                        )}
                       </tr>
                     )}
                   </Draggable>
