@@ -9,11 +9,8 @@ const GetForm = () => {
         setformDatas(data);
       });
   }, []);
-  const user = {
-    role: "Student",
-    name: "John",
-  };
-  console.log(formDatas?.data?.fields[0]?.user_email?.title);
+
+  console.log(formDatas?.data?.fields[0]?.user_gender);
   return (
     <div className="container w-50">
       <div>
@@ -21,72 +18,167 @@ const GetForm = () => {
       </div>
       <div className="mt-5">
         <form className="">
-          <div className="input-group mb-3">
-            <div className="input-group-prepend pe-5 pt-2">
-              <h6>{`${formDatas?.data?.fields[0]?.user_name?.title}`}</h6>
+          {formDatas?.data?.fields[0]?.user_name && (
+            <div className="form-group row mb-4">
+              <label
+                htmlFor="inputPassword"
+                className="col-sm-2 col-form-label"
+              >
+                {`${formDatas?.data?.fields[0]?.user_name?.title}`}
+              </label>
+              <div className="col-sm-10">
+                <input
+                  type={formDatas?.data?.fields[0]?.user_name?.type}
+                  className="form-control"
+                  placeholder=""
+                  aria-label=""
+                  aria-describedby="basic-addon1"
+                  required={
+                    formDatas?.data?.fields[0]?.user_name.required === true
+                      ? true
+                      : false
+                  }
+                  defaultValue={formDatas?.data?.fields[0]?.user_name?.value}
+                />
+              </div>
+              <div className="invalid-feedback">Please choose a username.</div>
             </div>
-            <input
-              type={formDatas?.data?.fields[0]?.user_name?.type}
-              className="form-control"
-              size="100px"
-              placeholder=""
-              aria-label=""
-              aria-describedby="basic-addon1"
-              required={
-                formDatas?.data?.fields[0]?.user_name.required === true
-                  ? true
-                  : false
-              }
-            />
-          </div>
-          <div className="input-group mb-3">
-            <div className="input-group-prepend pe-5 pt-2">
-              <h6>{`${formDatas?.data?.fields[0]?.user_email?.title}`}</h6>
+          )}
+          {formDatas?.data?.fields[0]?.user_email && (
+            <div className="form-group row mb-4">
+              <label
+                htmlFor="inputPassword"
+                className="col-sm-2 col-form-label"
+              >
+                {`${formDatas?.data?.fields[0]?.user_email?.title}`}
+              </label>
+              <div className="col-sm-10">
+                <input
+                  type={formDatas?.data?.fields[0]?.user_email?.type}
+                  className="form-control"
+                  placeholder=""
+                  aria-describedby="basic-addon1"
+                  required={
+                    formDatas?.data?.fields[0]?.user_name.required === true
+                      ? true
+                      : false
+                  }
+                />
+              </div>
             </div>
-            <input
-              type={formDatas?.data?.fields[0]?.user_email?.type}
-              className="form-control"
-              size="100px"
-              placeholder=""
-              aria-label=""
-              aria-describedby="basic-addon1"
-              required={
-                formDatas?.data?.fields[0]?.user_email?.required === true
-                  ? true
-                  : false
-              }
-            />
-          </div>
-          <input type="submit" value="Submit" />
-        </form>
-        <form>
-          <div className="form-group row">
-            <label for="staticEmail" className="col-sm-2 col-form-label">
-              Email
-            </label>
-            <div className="col-sm-10">
-              <input
-                type="text"
-                // readonly
-                className="form-control-plaintext"
-                id="staticEmail"
-                defaultValue="email@example.com"
-              />
+          )}
+          {formDatas?.data?.fields[0]?.details && (
+            <div className="form-group row mb-4">
+              <label
+                htmlFor="inputPassword"
+                className="col-sm-2 col-form-label"
+              >
+                {`${formDatas?.data?.fields[0]?.details?.title}`}
+              </label>
+              <div className="col-sm-10">
+                {formDatas?.data?.fields[0]?.details?.type === "textarea" ? (
+                  <textarea
+                    type={formDatas?.data?.fields[0]?.details?.type}
+                    className="form-control"
+                    placeholder=""
+                    aria-label=""
+                    aria-describedby="basic-addon1"
+                    required={
+                      formDatas?.data?.fields[0]?.details?.required === true
+                        ? true
+                        : false
+                    }
+                  />
+                ) : (
+                  <input
+                    type={formDatas?.data?.fields[0]?.details?.type}
+                    className="form-control"
+                    placeholder=""
+                    aria-label=""
+                    aria-describedby="basic-addon1"
+                    required={
+                      formDatas?.data?.fields[0]?.details?.required === true
+                        ? true
+                        : false
+                    }
+                  />
+                )}
+              </div>
             </div>
-          </div>
-          <div className="form-group row">
-            <label htmlFor="inputPassword" className="col-sm-2 col-form-label">
-              Password
-            </label>
-            <div className="col-sm-10">
-              <input
-                type="password"
-                className="form-control"
-                id="inputPassword"
-                placeholder="Password"
-              />
+          )}
+          {formDatas?.data?.fields[0]?.user_gender && (
+            <div className="form-group row mb-4">
+              <label
+                htmlFor="inputPassword"
+                className="col-sm-2 col-form-label"
+              >
+                {`${formDatas?.data?.fields[0]?.user_gender?.title}`}
+              </label>
+              <div className="col-sm-10">
+                {formDatas?.data?.fields[0]?.user_gender.type === "select" ? (
+                  <select
+                    className="form-select"
+                    aria-label="Default select example"
+                  >
+                    {/* <option>{`${formDatas?.data?.fields[0]?.user_gender?.type}`}</option> */}
+                    {formDatas?.data?.fields[0]?.user_gender?.options.map(
+                      (pd, index) => (
+                        <option
+                          key={pd.label}
+                          required={
+                            formDatas?.data?.fields[0]?.user_gender
+                              ?.required === true
+                              ? true
+                              : false
+                          }
+                          defaultValue={pd.key}
+                        >
+                          {pd.label}
+                        </option>
+                      )
+                    )}
+                  </select>
+                ) : (
+                  <div>
+                    {formDatas?.data?.fields[0]?.user_gender?.options.map(
+                      (pd, index) => (
+                        <div
+                          className="form-check form-check-inline"
+                          key={pd.key}
+                        >
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            name="inlineRadioOptions"
+                            id="inlineRadio1"
+                            value={pd.key}
+                            required={
+                              formDatas?.data?.fields[0]?.user_gender
+                                ?.required === true
+                                ? true
+                                : false
+                            }
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="inlineRadio1"
+                          >
+                            {pd.label}
+                          </label>
+                        </div>
+                      )
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          )}
+
+          <input
+            type="submit"
+            className="btn btn-primary"
+            defaultValue="submit"
+          />
         </form>
       </div>
     </div>
