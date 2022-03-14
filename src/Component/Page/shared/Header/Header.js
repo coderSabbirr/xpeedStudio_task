@@ -25,9 +25,9 @@ const Header = () => {
           </Link>
         </li>
         <li className="nav-item ">
-          <a className="nav-link table-li" href=".">
+          <Link className="nav-link table-li" to="/getForm">
             Get Form
-          </a>
+          </Link>
         </li>
         <li className="nav-item ">
           <a className="nav-link table-li" href=".">
