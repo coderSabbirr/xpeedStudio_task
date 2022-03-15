@@ -26,6 +26,7 @@ const GetForm = () => {
       });
   }, []);
   console.log(submitMessages);
+
   const handleSubmit = (e) => {
     fetch("http://localhost/api/submit_form.php", {
       method: "POST",

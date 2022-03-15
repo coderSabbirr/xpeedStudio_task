@@ -22,13 +22,26 @@ const TableList = () => {
         setReorderCheckd(data);
       });
   }, []);
-  console.log(reorderCheckd?.status, reorderCheckd?.messages?.join(`\n`));
+
   const handleDragEnd = (e) => {
     if (!e.destination) return;
     let dragData = Array.from(displayData);
     let [source_data] = dragData.splice(e.source.index, 1);
     dragData.splice(e.destination.index, 0, source_data);
     setDisplayData(dragData);
+    console.log(source_data);
+
+    fetch(`http://localhost/api/reorder.php`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        source_data,
+        index: e.destination.index,
+      }),
+    })
+      .then((res) => res.json())
+      .then((result) => {});
+
     if (reorderCheckd?.status === "success") {
       Swal.fire(
         `${reorderCheckd?.status}`,

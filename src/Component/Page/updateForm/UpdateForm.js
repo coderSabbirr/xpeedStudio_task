@@ -8,10 +8,10 @@ const UpdateForm = () => {
   const [email, setEmail] = useState("");
   const [details, setDetails] = useState("");
   const [gender, setGender] = useState("");
+  const [inputFiled, setInputFiled] = useState(``);
 
-  const [emailAttr, setEmailAttr] = useState([]);
   useEffect(() => {
-    fetch("http://localhost/api/get_form.php")
+    fetch(`http://localhost/api/get_form.php?id=${id}`)
       .then((res) => res.json())
       .then((data) => {
         setformDatas(data);
@@ -19,6 +19,36 @@ const UpdateForm = () => {
           setName(data?.data?.fields[0]?.user_name?.value);
       });
   }, []);
+  let objestPush = [];
+  const object = {
+    work_place: {
+      title: "Work place",
+      type: "text",
+      required: true,
+      validate: "only_letters",
+    },
+    designation: {
+      title: "Designation",
+      type: "text",
+      required: true,
+    },
+    test: {
+      title: "Designation",
+      type: "text",
+      required: true,
+    },
+  };
+  // for (const property in object) {
+  //   objestPush.push(`${property}: ${object[property].title}`);
+  // }
+  // console.log(objestPush);
+
+  const newInputFiled = () => {
+    for (const property in object) {
+      let newDataInput = inputFiled + `<input type="text" value="" />`;
+      setInputFiled(newDataInput);
+    }
+  };
 
   const handleName = (e) => {
     let value = e.target.value;
@@ -47,10 +77,15 @@ const UpdateForm = () => {
 
   return (
     <div>
-      <p>{id}</p>
       <div className="container w-50">
+        {/* {
+            for (const property in object) {
+              console.log(`${property}: ${object[property].title}`);
+            }
+        } */}
+
         <div>
-          <h3 className="text-center">Get Form</h3>
+          <h3 className="text-center">Update Form</h3>
         </div>
         <div className="mt-5">
           <form className="" onSubmit={onSubmit}>
@@ -219,7 +254,34 @@ const UpdateForm = () => {
                 </div>
               </div>
             )}
-
+            {formDatas?.data?.fields[0]?.user_hobby?.repeater_fields && (
+              <>
+                <label className="form-check-label" htmlFor="inlineRadio1">
+                  {
+                    formDatas?.data?.fields[0]?.user_hobby?.repeater_fields
+                      ?.work_place.title
+                  }
+                </label>
+                <input
+                  type={
+                    formDatas?.data?.fields[0]?.user_hobby?.repeater_fields
+                      ?.work_place.type
+                  }
+                  // defaultValue={formDatas?.data?.fields[0]?.user_email?.value}
+                  onChange={handleEmail}
+                  // maxLength={emailLimit}
+                  className="form-control"
+                  placeholder=""
+                  aria-describedby="basic-addon1"
+                  required={
+                    formDatas?.data?.fields[0]?.user_hobby?.repeater_fields
+                      ?.work_place.required === true
+                      ? true
+                      : false
+                  }
+                />
+              </>
+            )}
             <input
               type="submit"
               className="btn btn-primary"
