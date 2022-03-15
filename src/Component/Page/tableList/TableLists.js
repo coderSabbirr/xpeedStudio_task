@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const TableList = () => {
   const [tableDatas, setTableDatas] = useState([]);
   const [displayData, setDisplayData] = useState([]);
+  const [reorderCheckd, setReorderCheckd] = useState([]);
   const [order, setOrder] = useState("ASC");
 
   useEffect(() => {
@@ -14,21 +16,30 @@ const TableList = () => {
         setTableDatas(data);
         setDisplayData(data.data.rows);
       });
+    fetch(`http://localhost/api/reorder.php`)
+      .then((res) => res.json())
+      .then((data) => {
+        setReorderCheckd(data);
+      });
   }, []);
-
+  console.log(reorderCheckd?.status, reorderCheckd?.messages?.join(`\n`));
   const handleDragEnd = (e) => {
     if (!e.destination) return;
     let dragData = Array.from(displayData);
     let [source_data] = dragData.splice(e.source.index, 1);
     dragData.splice(e.destination.index, 0, source_data);
     setDisplayData(dragData);
-    if (tableDatas?.status === "success") {
-      Swal.fire(`${tableDatas?.status}`, `${tableDatas.messages}`, "success");
-    } else if (tableDatas?.status === "false") {
+    if (reorderCheckd?.status === "success") {
+      Swal.fire(
+        `${reorderCheckd?.status}`,
+        `${reorderCheckd?.messages?.join(`\n`)}`,
+        "success"
+      );
+    } else if (reorderCheckd?.status === "false") {
       Swal.fire({
         icon: "error",
-        title: `${tableDatas?.status}`,
-        text: `${tableDatas.messages}`,
+        title: `${reorderCheckd?.status}`,
+        text: `${reorderCheckd?.messages?.join(`\n`)}`,
       });
     }
   };
@@ -223,7 +234,7 @@ const TableList = () => {
                             {...provider.dragHandleProps}
                             onClick={dargChange}
                           >
-                            {user.id}
+                            <Link to={`/updateform/${user.id}`}>{user.id}</Link>
                           </td>
                         )}
                         {tableDatas.data?.headers[0]?.name.hidden === false && (
