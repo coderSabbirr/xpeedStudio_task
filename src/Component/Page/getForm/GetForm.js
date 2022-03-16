@@ -25,7 +25,6 @@ const GetForm = () => {
         setSubmitMessages(data);
       });
   }, []);
-  console.log(submitMessages);
 
   const handleSubmit = (e) => {
     fetch("http://localhost/api/submit_form.php", {
@@ -51,11 +50,12 @@ const GetForm = () => {
       Swal.fire({
         icon: "error",
         title: `${submitMessages?.status}`,
-        text: `${submitMessages?.messages?.join(`\n`)}`,
+        text: `${submitMessages?.messages}`,
       });
     }
     setName("");
     setEmail("");
+    setDetails("");
   };
   const handleName = (e) => {
     let value = e.target.value;
@@ -121,6 +121,7 @@ const GetForm = () => {
               <div className="col-sm-10">
                 <input
                   type={formDatas?.data?.fields[0]?.user_email?.type}
+                  {...formDatas?.data?.fields[0]?.user_email.html_attr}
                   value={email}
                   onChange={handleEmail}
                   maxLength={emailLimit}
@@ -147,6 +148,7 @@ const GetForm = () => {
               <div className="col-sm-10">
                 {formDatas?.data?.fields[0]?.details?.type === "textarea" ? (
                   <textarea
+                    {...formDatas?.data?.fields[0]?.details.html_attr}
                     type={formDatas?.data?.fields[0]?.details?.type}
                     onChange={handleDetails}
                     className="form-control"
@@ -188,6 +190,7 @@ const GetForm = () => {
               <div className="col-sm-10">
                 {formDatas?.data?.fields[0]?.user_gender.type === "select" ? (
                   <select
+                    {...formDatas?.data?.fields[0]?.user_gender.html_attr}
                     className="form-select"
                     onChange={handleGender}
                     defaultValue={

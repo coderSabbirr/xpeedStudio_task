@@ -1,74 +1,63 @@
+import parse from "html-react-parser";
 import React, { useState } from "react";
-
 const InputTest = () => {
-  const [serviceList, setServiceList] = useState([{ service: "", ffffff: "" }]);
+  const [inputEle, setInputEle] = useState(``);
 
-  const handleServiceChange = (e, index) => {
-    const { name, value } = e.target;
-    const list = [...serviceList];
-    list[index][name] = value;
-    setServiceList(list);
+  const user_hobby = {
+    title: "Work",
+    type: "repeater",
+    repeater_fields: {
+      work_place: {
+        title: "Work place",
+        type: "text",
+        required: true,
+        validate: "only_letters",
+      },
+      designation: {
+        title: "Designation",
+        type: "text",
+        required: true,
+      },
+      asdsasdasnation: {
+        title: "sdfgnation",
+        type: "text",
+        required: true,
+      },
+    },
   };
+  console.log(user_hobby);
+  const genInput = () => {
+    let genNewIn = inputEle;
+    for (let key in user_hobby.repeater_fields) {
+      genNewIn =
+        genNewIn +
+        `<div className="form-group row mb-4">
+                  <label className="col-sm-2 col-form-label">
+                    ${user_hobby.repeater_fields[key].title}
+                  </label>
+                  <div className="col-sm-10">
+                    <input
+                      type=${user_hobby.repeater_fields[key].type}
+                      className="form-control"
+                      placeholder=""
+                      aria-label=""
+                      aria-describedby="basic-addon1"
+                      required=${user_hobby.repeater_fields[key].required}
+                    />
+                  </div>
+                  </div>`;
+    }
 
-  const handleServiceRemove = (index) => {
-    const list = [...serviceList];
-    list.splice(index, 1);
-    setServiceList(list);
-  };
-
-  const handleServiceAdd = () => {
-    setServiceList([...serviceList, { service: "", ddddd: "" }]);
+    setInputEle(genNewIn);
   };
 
   return (
-    <form className="App" autoComplete="off">
-      <div className="form-field">
-        <label htmlFor="service">Service(s)</label>
-        {serviceList.map((singleService, index) => (
-          <div key={index} className="services">
-            <div className="first-division">
-              <input
-                name="service"
-                type="text"
-                id="service"
-                value={singleService.service}
-                onChange={(e) => handleServiceChange(e, index)}
-                required
-              />
-              {serviceList.length - 1 === index && serviceList.length < 4 && (
-                <button
-                  type="button"
-                  onClick={handleServiceAdd}
-                  className="add-btn"
-                >
-                  <span>Add a Service</span>
-                </button>
-              )}
-            </div>
-            <div className="second-division">
-              {serviceList.length !== 1 && (
-                <button
-                  type="button"
-                  onClick={() => handleServiceRemove(index)}
-                  className="remove-btn"
-                >
-                  <span>Remove</span>
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="output">
-        <h2>Output</h2>
-        {serviceList &&
-          serviceList.map((singleService, index) => (
-            <ul key={index}>
-              {singleService.service && <li>{singleService.service}</li>}
-            </ul>
-          ))}
-      </div>
-    </form>
+    <div>
+      <div>{parse(inputEle)}</div>
+      <button onClick={genInput}>GenInput</button>
+      <h1>Hello StackBlitz!</h1>
+      <p>Start editing to see some magic happen :)</p>
+    </div>
   );
 };
 

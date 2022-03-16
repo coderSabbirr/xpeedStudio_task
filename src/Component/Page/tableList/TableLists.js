@@ -29,7 +29,6 @@ const TableList = () => {
     let [source_data] = dragData.splice(e.source.index, 1);
     dragData.splice(e.destination.index, 0, source_data);
     setDisplayData(dragData);
-    console.log(source_data);
 
     fetch(`http://localhost/api/reorder.php`, {
       method: "POST",
@@ -172,9 +171,6 @@ const TableList = () => {
   };
   // sorted by name,message,date end
 
-  const dargChange = (e) => {
-    console.log("hit me");
-  };
   return (
     <div
       className="w-50 mt-5"
@@ -232,7 +228,6 @@ const TableList = () => {
                 className="text-capitalize"
                 ref={provider.innerRef}
                 {...provider.droppableProps}
-                onChange={dargChange}
               >
                 {displayData?.map((user, index) => (
                   <Draggable
@@ -243,36 +238,33 @@ const TableList = () => {
                     {(provider) => (
                       <tr {...provider.draggableProps} ref={provider.innerRef}>
                         {tableDatas.data?.headers[0]?.id.hidden === false && (
-                          <td
-                            {...provider.dragHandleProps}
-                            onClick={dargChange}
-                          >
-                            <Link to={`/updateform/${user.id}`}>{user.id}</Link>
+                          <td {...provider.dragHandleProps}>
+                            <Link
+                              style={{ textDecoration: "none" }}
+                              to={`/updateform/${user.id}`}
+                            >
+                              {user.id}
+                            </Link>
                           </td>
                         )}
                         {tableDatas.data?.headers[0]?.name.hidden === false && (
-                          <td
-                            {...provider.dragHandleProps}
-                            onClick={dargChange}
-                          >
-                            {user.name}
+                          <td {...provider.dragHandleProps}>
+                            {" "}
+                            <Link
+                              style={{ textDecoration: "none" }}
+                              to={`/updateform/${user.id}`}
+                            >
+                              {user.name}
+                            </Link>
                           </td>
                         )}
                         {tableDatas.data?.headers[0]?.message.hidden ===
                           false && (
-                          <td
-                            {...provider.dragHandleProps}
-                            onClick={dargChange}
-                          >
-                            {user.message}
-                          </td>
+                          <td {...provider.dragHandleProps}>{user.message}</td>
                         )}
                         {tableDatas.data?.headers[0]?.created_at.hidden ===
                           false && (
-                          <td
-                            {...provider.dragHandleProps}
-                            onClick={dargChange}
-                          >
+                          <td {...provider.dragHandleProps}>
                             {user.created_at}
                           </td>
                         )}

@@ -1,5 +1,7 @@
+import parse from "html-react-parser";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const UpdateForm = () => {
   const { id } = useParams();
@@ -8,7 +10,8 @@ const UpdateForm = () => {
   const [email, setEmail] = useState("");
   const [details, setDetails] = useState("");
   const [gender, setGender] = useState("");
-  const [inputFiled, setInputFiled] = useState(``);
+  const [submitMessages, setSubmitMessages] = useState([]);
+  const [inputEle, setInputEle] = useState(``);
 
   useEffect(() => {
     fetch(`http://localhost/api/get_form.php?id=${id}`)
@@ -17,38 +20,15 @@ const UpdateForm = () => {
         setformDatas(data);
         data?.data?.fields[0]?.user_name?.value &&
           setName(data?.data?.fields[0]?.user_name?.value);
+        data?.data?.fields[0]?.user_email?.value &&
+          setEmail(data?.data?.fields[0]?.user_email?.value);
+      });
+    fetch("http://localhost/api/submit_form.php")
+      .then((res) => res.json())
+      .then((data) => {
+        setSubmitMessages(data);
       });
   }, []);
-  let objestPush = [];
-  const object = {
-    work_place: {
-      title: "Work place",
-      type: "text",
-      required: true,
-      validate: "only_letters",
-    },
-    designation: {
-      title: "Designation",
-      type: "text",
-      required: true,
-    },
-    test: {
-      title: "Designation",
-      type: "text",
-      required: true,
-    },
-  };
-  // for (const property in object) {
-  //   objestPush.push(`${property}: ${object[property].title}`);
-  // }
-  // console.log(objestPush);
-
-  const newInputFiled = () => {
-    for (const property in object) {
-      let newDataInput = inputFiled + `<input type="text" value="" />`;
-      setInputFiled(newDataInput);
-    }
-  };
 
   const handleName = (e) => {
     let value = e.target.value;
@@ -67,28 +47,76 @@ const UpdateForm = () => {
     setGender(value);
   };
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-  };
   const emailLimit = formDatas?.data?.fields[0]?.user_email?.validate?.replace(
     /\D/g,
     ""
   );
+  const handleSubmit = (e) => {
+    fetch("http://localhost/api/submit_form.php", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        details: details,
+        gender: gender,
+      }),
+    })
+      .then((res) => res.json())
+      .then((result) => {});
+    e.preventDefault();
+    if (submitMessages?.status === "success") {
+      Swal.fire(
+        `${submitMessages?.status}`,
+        `${submitMessages?.messages?.join(`\n`)}`,
+        "success"
+      );
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: `${submitMessages?.status}`,
+        text: `${submitMessages?.messages}`,
+      });
+    }
+    setName(" ");
+    setEmail(" ");
+    setDetails(" ");
+  };
+  const user_hobby = formDatas?.data?.fields[0]?.user_hobby;
 
+  const genInput = () => {
+    let genNewIn = inputEle;
+    for (let key in user_hobby.repeater_fields) {
+      genNewIn =
+        genNewIn +
+        `<div className="form-group row mb-4">
+                  <label className="col-sm-2 col-form-label">
+                    ${user_hobby.repeater_fields[key].title}
+                  </label>
+                  <div className="col-sm-10">
+                    <input
+                      type=${user_hobby.repeater_fields[key].type}
+                      className="form-control"
+                      placeholder=""
+                      aria-label=""
+                      aria-describedby="basic-addon1"
+                      required=${user_hobby.repeater_fields[key].required}
+             
+                    />
+                  </div>
+                  </div>`;
+    }
+
+    setInputEle(genNewIn);
+  };
   return (
     <div>
       <div className="container w-50">
-        {/* {
-            for (const property in object) {
-              console.log(`${property}: ${object[property].title}`);
-            }
-        } */}
-
         <div>
           <h3 className="text-center">Update Form</h3>
         </div>
         <div className="mt-5">
-          <form className="" onSubmit={onSubmit}>
+          <form className="" onSubmit={handleSubmit}>
             {formDatas?.data?.fields[0]?.user_name && (
               <div className="form-group row mb-4">
                 <label className="col-sm-2 col-form-label">
@@ -123,8 +151,9 @@ const UpdateForm = () => {
                 </label>
                 <div className="col-sm-10">
                   <input
+                    {...formDatas?.data?.fields[0]?.user_email.html_attr}
                     type={formDatas?.data?.fields[0]?.user_email?.type}
-                    defaultValue={formDatas?.data?.fields[0]?.user_email?.value}
+                    value={email}
                     onChange={handleEmail}
                     maxLength={emailLimit}
                     className="form-control"
@@ -150,11 +179,13 @@ const UpdateForm = () => {
                 <div className="col-sm-10">
                   {formDatas?.data?.fields[0]?.details?.type === "textarea" ? (
                     <textarea
+                      {...formDatas?.data?.fields[0]?.details.html_attr}
                       type={formDatas?.data?.fields[0]?.details?.type}
                       onChange={handleDetails}
                       className="form-control"
                       placeholder=""
                       aria-label=""
+                      value={details}
                       aria-describedby="basic-addon1"
                       required={
                         formDatas?.data?.fields[0]?.details?.required === true
@@ -165,6 +196,7 @@ const UpdateForm = () => {
                   ) : (
                     <input
                       onChange={handleDetails}
+                      {...formDatas?.data?.fields[0]?.details.html_attr}
                       type={formDatas?.data?.fields[0]?.details?.type}
                       className="form-control"
                       placeholder=""
@@ -254,33 +286,18 @@ const UpdateForm = () => {
                 </div>
               </div>
             )}
-            {formDatas?.data?.fields[0]?.user_hobby?.repeater_fields && (
-              <>
-                <label className="form-check-label" htmlFor="inlineRadio1">
-                  {
-                    formDatas?.data?.fields[0]?.user_hobby?.repeater_fields
-                      ?.work_place.title
-                  }
-                </label>
-                <input
-                  type={
-                    formDatas?.data?.fields[0]?.user_hobby?.repeater_fields
-                      ?.work_place.type
-                  }
-                  // defaultValue={formDatas?.data?.fields[0]?.user_email?.value}
-                  onChange={handleEmail}
-                  // maxLength={emailLimit}
-                  className="form-control"
-                  placeholder=""
-                  aria-describedby="basic-addon1"
-                  required={
-                    formDatas?.data?.fields[0]?.user_hobby?.repeater_fields
-                      ?.work_place.required === true
-                      ? true
-                      : false
-                  }
+
+            {formDatas?.data?.fields[0]?.user_hobby && (
+              <div>
+                <img
+                  src="https://i.ibb.co/YXTdw4h/icons8-plus-math-50.png"
+                  alt="add"
+                  onClick={genInput}
+                  style={{ marginBottom: "20px", width: "50px" }}
                 />
-              </>
+
+                <div>{parse(inputEle)}</div>
+              </div>
             )}
             <input
               type="submit"
